@@ -1,34 +1,30 @@
 (() => {
-
-    const bike = document.getElementById('unique');
+    // Wheelie Animation
+    const bike = document.getElementById('moto');
 
     document.getElementById('button').onclick = () => {
         bike.classList.toggle('no-wheelie');
         bike.classList.toggle('wheelie');
     };
 
-    let scroll = false;
+    // Background Scroll Animation
+    let scrollEnabled = false;
 
-    document.getElementById('background-toggle').onclick = () => {
-        scroll = !scroll;
-        if (scroll) {
-            loop();
-        }
-    };
-
-    const pic = document.createElement('img');
-    pic.src = 'bg.jpg';
-    pic.classList.add('sidewalk');
-    const pic2 = pic.cloneNode();
-
-    const slide1 = {scroll: 50, element: pic};
-    const slide2 = {scroll: 0, element: pic2};
+    const slide1 = {scroll: 50, element: document.getElementById('slide1')};
+    const slide2 = {scroll: 0, element: document.getElementById('slide2')};
 
     const frameRate = 30;
 
     let timeInterval = 3000;
 
     const frameDuration = 1000 / frameRate;
+
+    document.getElementById('scroll-toggle').onclick = () => {
+        scrollEnabled = !scrollEnabled;
+        if (scrollEnabled) {
+            loop();
+        }
+    }
 
     document.getElementById('speed-up').onclick = () => {
         if (timeInterval >= 1000) {
@@ -40,6 +36,24 @@
         if (timeInterval <= 5000) {
             timeInterval += 500
         }
+    }
+
+    const loop = () => {
+        setTimeout(nextFrame, frameDuration);
+    }
+
+    const nextFrame = () => {
+        setPosition(slide1);
+        setPosition(slide2);
+        if (scrollEnabled) {
+            loop();
+        }
+    }
+
+    const setPosition = (element) => {
+        element.scroll = calculatePercent(element.scroll);
+        const position = calculatePosition(element);
+        element.element.style.transform = `translateX(${position}%)`;
     }
 
     const calculatePercent = (pos) => {
@@ -54,34 +68,7 @@
         return pos + 100 / (timeInterval / frameDuration);
     }
 
-    const setPosition = (element) => {
-        element.scroll = calculatePercent(element.scroll);
-        const position = calculatePosition(element);
-        element.element.style.transform = `translateX(${position}%)`;
-    }
-
     const calculatePosition = (element) => {
         return element.scroll * 2 - 100;
     }
-
-    const background = document.getElementById('background');
-
-    const loop = () => {
-        setTimeout(onInterval, frameDuration);
-    }
-
-    const initialBackground = () => {
-        background.appendChild(pic);
-        background.appendChild(pic2);
-    }
-
-    const onInterval = () => {
-        setPosition(slide1);
-        setPosition(slide2);
-        if (scroll) {
-            loop();
-        }
-    }
-
-    initialBackground();
 })()
